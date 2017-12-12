@@ -8,14 +8,24 @@ earth_escape_velocity = 11186
 earth_temperature = 287.2
 jupiter_radius = 69911000
 boltzmann_constant = 1.36 * 10 ** -23
-star_temperature = {"O": 35000, "B": 15000, "A": 9000, "F": 7000, "G": 5500, "K": 4000, "M": 3000, "SOL": 5772}
+star_temperature = {"O (35.000 K)": 35000, "B (15.000 K)": 15000, "A (9.000 K)": 9000, "F (7.000 K)": 7000, "G (5.500 K)": 5500, "K (4000 K)": 4000, "M (3000 K)": 3000, "SOL (5772 K)": 5772}
 exo_albedo = {"Terra": 0.39, "Neptú": 0.35, "Júpiter": 0.52}
 
 
-class DoubleReturn:
-    def __init__(self, ist, is_habitable):
+class ExoplanetDataWrapper:
+    def __init__(self, ist, is_habitable, radius, density, escape_velocity, temperature, radius_relation, density_relation, escape_velocity_relation, temperature_relation):
         self.ist = ist
         self.is_habitable = is_habitable
+        self.is_habitable = is_habitable
+        self.radius = radius
+        self.density = density
+        self.escape_velocity = escape_velocity
+        self.temperature = temperature
+        self.radius_relation = radius_relation
+        self.density_relation = density_relation
+        self.escape_velocity_relation = escape_velocity_relation
+        self.temperature_relation = temperature_relation
+
 
 def calculate_exoplanet_mass(exo_rad):
     exo_earth_radius = exo_rad * 10.97331659
@@ -46,7 +56,7 @@ def calculate_relation(x, y):
     return 1 - abs(xminusy / xplusy)
 
 
-def calculate_IST(exoplanet_radius, exo_type, star_type, exo_orbit, star_rad, habitable_zone):
+def calculate_IST(exoplanet_radius, exo_type, star_type, exo_orbit, star_rad):
     exo_mass = calculate_exoplanet_mass(exoplanet_radius)
     print("mass ", exo_mass)
     exo_density = calculate_exoplanet_density(exo_mass, exoplanet_radius)
@@ -66,12 +76,8 @@ def calculate_IST(exoplanet_radius, exo_type, star_type, exo_orbit, star_rad, ha
     ist = radius_relation ** (0.57 / 4) * density_relation ** (1.07 / 4) * escape_velocity_relation ** (
         0.7 / 4) * temperature_relation ** (5.58 / 4) * 100
     print(ist)
-    if habitable_zone:
-        if 263 < exo_temperature < 383:
-            is_habitable = True
-        else:
-            is_habitable = False
+    if 263 < exo_temperature < 383:
+        is_habitable = True
     else:
-        is_habitable = None
-    combined_IST = DoubleReturn(ist, is_habitable)
-    return combined_IST
+        is_habitable = False
+    return ExoplanetDataWrapper(ist, is_habitable, exoplanet_radius, exo_density, exo_escape_velocity, exo_temperature, radius_relation * 100, density_relation * 100, escape_velocity_relation * 100, temperature_relation * 100)
