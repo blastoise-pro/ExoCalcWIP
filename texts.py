@@ -1,1 +1,0 @@
-default_status = "Benvingut! La informació es mostrarà aquí. Pots arrossegar el ratolí per sobre del nom de cada apartat per obtenir més informació."
